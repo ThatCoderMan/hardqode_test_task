@@ -7,8 +7,18 @@ from django.dispatch import receiver
 
 
 class Product(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец", help_text="Владелец продукта")
-    name = models.CharField(max_length=100, unique=True, verbose_name="Название", help_text="Название продукта")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        help_text="Владелец продукта",
+    )
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="Название",
+        help_text="Название продукта",
+    )
 
     def __str__(self):
         return self.name
@@ -19,8 +29,19 @@ class Product(models.Model):
 
 
 class ProductAccess(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", help_text="Пользователь с доступом к продукту")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="users", verbose_name="Продукт", help_text="Продукт, к которому есть доступ")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        help_text="Пользователь с доступом к продукту",
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="users",
+        verbose_name="Продукт",
+        help_text="Продукт, к которому есть доступ",
+    )
 
     class Meta:
         unique_together = ("user", "product")
@@ -32,13 +53,29 @@ class ProductAccess(models.Model):
 
 
 class Lesson(models.Model):
-    product = models.ManyToManyField(Product, related_name="lessons", verbose_name="Продукты", help_text="Продукты, в которых содержится урок")
-    name = models.CharField(max_length=100, verbose_name="Название", help_text="Название урока")
-    video_link = models.URLField(unique=True, verbose_name="Ссылка на видео", help_text="Ссылка на видео урока")
-    duration = models.DurationField(verbose_name="Длительность", help_text="Длительность просмотра урока (в секундах)")
+    product = models.ManyToManyField(
+        Product,
+        related_name="lessons",
+        verbose_name="Продукты",
+        help_text="Продукты, в которых содержится урок",
+    )
+    name = models.CharField(
+        max_length=100,
+        verbose_name="Название",
+        help_text="Название урока"
+    )
+    video_link = models.URLField(
+        unique=True,
+        verbose_name="Ссылка на видео",
+        help_text="Ссылка на видео урока"
+    )
+    duration = models.DurationField(
+        verbose_name="Длительность",
+        help_text="Длительность просмотра урока (в секундах)",
+    )
 
     @property
-    def duration_seconds(self):
+    def duration_seconds(self) -> int:
         return int(self.duration.total_seconds())
 
     def __str__(self):
@@ -50,17 +87,35 @@ class Lesson(models.Model):
 
 
 class ViewLesson(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", help_text="Пользователь, просмотревший урок")
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name="Урок", help_text="Урок, просмотренный пользователем")
-    viewed_time = models.DurationField(default=timedelta, verbose_name="Время просмотра", help_text="Общее время просмотра урока")
-    last_view = models.DateField(auto_now=True, verbose_name="Дата последнего просмотра", help_text="Дата последнего просмотра урока")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        help_text="Пользователь, просмотревший урок",
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        verbose_name="Урок",
+        help_text="Урок, просмотренный пользователем",
+    )
+    viewed_time = models.DurationField(
+        default=timedelta,
+        verbose_name="Время просмотра",
+        help_text="Общее время просмотра урока",
+    )
+    last_view = models.DateField(
+        auto_now=True,
+        verbose_name="Дата последнего просмотра",
+        help_text="Дата последнего просмотра урока",
+    )
 
     @property
-    def viewed_seconds(self):
+    def viewed_seconds(self) -> int:
         return int(self.viewed_time.total_seconds())
 
     @property
-    def status(self):
+    def status(self) -> str:
         if self._calculate_viewed_percentage() >= 0.8:
             return "Просмотрено"
         return "Не просмотрено"
@@ -71,7 +126,10 @@ class ViewLesson(models.Model):
         return viewed_time / total_time
 
     def __str__(self):
-        return f"{self.user} просмотрел {self.viewed_seconds} секунд урока {self.lesson}"
+        return (
+            f"{self.user} просмотрел {self.viewed_seconds} секунд "
+            f"урока {self.lesson}"
+        )
 
     class Meta:
         unique_together = ("user", "lesson")

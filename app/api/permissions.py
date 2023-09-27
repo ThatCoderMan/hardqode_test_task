@@ -8,4 +8,6 @@ class HasAccessPermission(BasePermission):
     def has_permission(self, request, view):
         user = view.kwargs["user"]
         product = view.kwargs["product"]
-        return ProductAccess.objects.filter(user=user, product=product).exists()
+        return ProductAccess.objects.filter(
+            user__username=user, product__name=product
+        ).exists()

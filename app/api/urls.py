@@ -5,12 +5,12 @@ from .views import (ProductStatisticsView, UserLessonsView,
 
 urlpatterns = [
     path(
-        "lessons/<int:user>/",
+        "lessons/<str:user>/",
         UserLessonsView.as_view(),
         name="user-products"
     ),
     path(
-        "lessons/<int:user>/<int:product>",
+        "lessons/<str:user>/<str:product>",
         UserProductLessonsView.as_view(),
         name="user-lessons",
     ),

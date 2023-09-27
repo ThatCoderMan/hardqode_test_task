@@ -24,12 +24,8 @@ class ProductAdmin(admin.ModelAdmin):
     verbose_name_plural = "Продукты"
 
     def have_access(self, obj):
-        return ", ".join(
-            [
-                access.user.username
-                for access in obj.users.all()
-            ]
-        )
+        return ", ".join([access.user.username for access in obj.users.all()])
+
     have_access.short_description = "Доступные пользователи"
 
 
@@ -42,6 +38,7 @@ class LessonAdmin(admin.ModelAdmin):
 
     def products(self, obj):
         return ", ".join([product.name for product in obj.product.all()])
+
     products.short_description = "Продукты"
 
 

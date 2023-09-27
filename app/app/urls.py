@@ -6,9 +6,9 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='API документация',
-        default_version='v1',
-        description='API документация',
+        title="API документация",
+        default_version="v1",
+        description="API документация",
         contact=openapi.Contact(email="contact@example.com"),
     ),
     public=True,
@@ -16,14 +16,16 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include("api.urls")),
+    path("admin/", admin.site.urls),
+    path("api/", include("api.urls")),
     path(
-        'swagger', schema_view.with_ui('swagger', cache_timeout=0),
-        name='swagger'
+        "swagger",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="swagger"
     ),
     path(
-        'redoc', schema_view.with_ui('redoc', cache_timeout=0),
-        name='redoc'
+        "redoc",
+        schema_view.with_ui("redoc", cache_timeout=0),
+        name="redoc"
     ),
 ]

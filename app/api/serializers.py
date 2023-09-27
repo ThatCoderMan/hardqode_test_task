@@ -21,8 +21,9 @@ class ProductSerializer(serializers.ModelSerializer):
     )
     def get_lessons(self, obj):
         lessons = ViewLesson.objects.filter(
-            user=obj.user, lesson__product=obj.product
-        ).all()
+                user=obj.user,
+                lesson__product=obj.product
+        ).prefetch_related("lesson").all()
         return LessonViewSerializer(lessons, many=True).data
 
     class Meta:
@@ -62,7 +63,8 @@ class StatisticSerializer(serializers.ModelSerializer):
     def get_acquisition_percentage(self, obj) -> int:
         total_users = User.objects.count()
         product_access_count = ProductAccess.objects.filter(
-            product=obj).count()
+            product=obj
+        ).count()
         return (product_access_count / total_users) * 100 if total_users else 0
 
     class Meta:

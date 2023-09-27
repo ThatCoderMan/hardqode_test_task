@@ -11,7 +11,9 @@ class UserLessonsView(ListAPIView):
 
     def get_queryset(self):
         user = self.kwargs["user"]
-        return ProductAccess.objects.filter(user=user)
+        return ProductAccess.objects.filter(
+            user__username=user
+        ).prefetch_related("product__lessons")
 
 
 class UserProductLessonsView(ListAPIView):
@@ -21,9 +23,11 @@ class UserProductLessonsView(ListAPIView):
     def get_queryset(self):
         user = self.kwargs["user"]
         product = self.kwargs["product"]
-        return ViewLesson.objects.filter(user=user, lesson__product=product)
+        return ViewLesson.objects.filter(
+            user__username=user, lesson__product__name=product
+        ).prefetch_related("lesson")
 
 
 class ProductStatisticsView(ListAPIView):
     serializer_class = StatisticSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().prefetch_related("lessons")
